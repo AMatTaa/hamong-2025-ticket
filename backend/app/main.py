@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, Security, status
 from fastapi.security import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
-from schemas import RSVP, RSVPResponse, RSVPCreate
+from app.schemas import RSVP, RSVPResponse, RSVPCreate
 from typing import List
 from datetime import datetime
 import os
