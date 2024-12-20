@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import LandingPage from './components/pages/LandingPage'
-import RsvpPage from './components/pages/RsvpPage'
-import EventInfoPage from './components/pages/EventInfoPage'
+import LandingPage from './pages/LandingPage'
+import RsvpPage from './pages/RsvpPage'
+import EventInfoPage from './pages/EventInfoPage'
 
 function App() {
   return (
