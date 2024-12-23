@@ -4,6 +4,16 @@ module.exports = {
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
   	extend: {
+		borderWidth: {
+			'1': '1px',   // Custom border width of 1 pixel
+			'3': '3px',   // Custom border width of 3 pixels
+			'5': '5px',   // Custom border width of 5 pixels
+			'6': '6px',   // Custom border width of 6 pixels
+			'10': '10px', // Custom border width of 10 pixels
+		},
+		fontFamily: {
+			kr: ['Noto Sans KR', 'sans-serif'],
+		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
