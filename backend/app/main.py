@@ -1,85 +1,110 @@
 from fastapi import FastAPI, HTTPException, Depends, Security, status
 from fastapi.security import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
-from schemas import RSVP, RSVPResponse, RSVPCreate
+from schemas import RSVP, RSVPResponse, RSVPCreate, RSVPBase
+from models import RSVP as RSVPModel, Base
 from typing import List
 from datetime import datetime
 import os
-import boto3
-from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 from fastapi.responses import FileResponse
-import uuid
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.ext.declarative import declarative_base
+import traceback
+import uvicorn
 
 # Load environment variables
 load_dotenv()
 
-app = FastAPI()
+app = FastAPI(debug=True)
 
 # CORS configuration
 origins = [
     "http://localhost:5173",  # Vite default dev server
-    "http://localhost:3000",
+    "http://localhost:3000",  # Local development
     os.getenv("FRONTEND_URL", ""),  # Production frontend URL
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=origins,  # Use the defined origins instead of "*"
+    allow_credentials=True,  # Enable if you need to send cookies
+    allow_methods=["GET", "POST"],  # Specify the HTTP methods you need
+    allow_headers=["*"],  # You might want to specify exact headers in production
 )
 
-# Security
-API_KEY_NAME = "X-API-Key"
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
 
-async def get_api_key(
-    api_key_header: str = Security(api_key_header),
-) -> str:
-    if api_key_header == os.getenv("ADMIN_API_KEY"):
-        return api_key_header
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid API Key"
-    )
+# Database setup
+DATABASE_URL = os.getenv("DATABASE_URL")
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# DynamoDB setup
-dynamodb = boto3.resource('dynamodb',
-    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-    region_name=os.getenv('AWS_REGION')
-)
-table = dynamodb.Table(os.getenv('DYNAMODB_TABLE_NAME'))
-
-@app.post("/api/send_rsvp", response_model=RSVPResponse)
-async def send_rsvp(rsvp: RSVPCreate):
-    """
-    Create a new RSVP entry in DynamoDB
-    """
+# Add table creation here, after database setup and before routes
+def init_db():
     try:
-        rsvp_item = {
-            'id': str(uuid.uuid4()),
-            'phone_number': rsvp.phone_number,
-            'name': rsvp.name,
-            'guest_count': rsvp.guest_count,
-            'created_at': datetime.utcnow().isoformat()
-        }
+        # Drop all tables
+        # Base.metadata.drop_all(bind=engine)
+        # Create all tables
+        Base.metadata.create_all(bind=engine)
+        print("Database tables created successfully")
+    except Exception as e:
+        print(f"Error creating database tables: {e}")
+
+# Call it when the app starts
+init_db()
+
+# Dependency to get DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@app.post("/send_rsvp", response_model=RSVPResponse)
+async def send_rsvp(rsvp: RSVPCreate, db: Session = Depends(get_db)):
+    """
+    Create a new RSVP entry in PostgreSQL
+    """
+    print("Received RSVP data:", rsvp.dict())  # Debug log
+    try:
+        # Use the correct model from models.py
+        db_rsvp = RSVPModel(
+            guest_contact=str(rsvp.phone),  # Map phone to guest_contact
+            guest_name=str(rsvp.name),      # Map name to guest_name
+            accompany=int(rsvp.guests)      # Map guests to accompany
+        )
+        print("Created DB model:", db_rsvp.__dict__)  # Debug log
+        db.add(db_rsvp)
+        db.commit()
+        db.refresh(db_rsvp)
         
-        table.put_item(Item=rsvp_item)
+        # Convert to response format
+        response_rsvp = RSVP(
+            phone=db_rsvp.guest_contact,
+            name=db_rsvp.guest_name,
+            guests=db_rsvp.accompany,
+            idx=db_rsvp.idx,
+            created_at=db_rsvp.created_at
+        )
         
         return {
             "message": "RSVP successfully created",
-            "rsvp": rsvp_item
+            "rsvp": response_rsvp
         }
-    except ClientError as e:
+    except Exception as e:
+        db.rollback()
+        print(traceback.format_exc(), e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to create RSVP: {str(e)}"
         )
 
-@app.get("/api/get_info")
+@app.get("/get_info")
 async def get_info():
     """
     Return event image
@@ -97,27 +122,14 @@ async def get_info():
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to retrieve image"
         )
-
-@app.get("/api/admin/rsvps", response_model=List[RSVP])
-async def get_all_rsvps(
-    api_key: str = Depends(get_api_key)
-):
-    """
-    Get all RSVPs from DynamoDB (admin only)
-    """
-    try:
-        response = table.scan()
-        items = response.get('Items', [])
-        
-        # Handle pagination if there are more items
-        while 'LastEvaluatedKey' in response:
-            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-            items.extend(response['Items'])
-            
-        return items
-    except ClientError as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to retrieve RSVPs: {str(e)}"
-        )
     
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=8000,
+        ssl_keyfile="./localhost+2-key.pem",  # path to your key file
+        ssl_certfile="./localhost+2.pem",     # path to your cert file
+        reload=True
+    )

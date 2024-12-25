@@ -1,8 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Nanum+Myeongjo&family=Black+Han+Sans&family=Do+Hyeon&family=Smokum&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -56,12 +57,13 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
+} */
 
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #ffffff;
+    font-family: 'Nanum Myeongjo', 'Noto Sans KR', sans-serif;
   }
   a:hover {
     color: #747bff;
@@ -70,6 +72,23 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.hamong-background {
+  background-color: #E8EAEA; /* Equivalent to bg-[#E8EAEA] */
+  min-height: 100vh; /* Equivalent to min-h-screen */
+  display: flex; /* Equivalent to flex */
+  flex-direction: column; /* Equivalent to flex-col */
+  align-items: center; /* Equivalent to items-center */
+  justify-content: center; /* Equivalent to justify-center */
+  font-family: 'Nanum Myeongjo', serif;
+}
+
+/* .soft-grid-background {
+  background-image: 
+      linear-gradient(to right, #A5A696 1px, transparent 1px),
+      linear-gradient(to bottom, #A5A696 1px, transparent 1px);
+  background-size: 12vw 12vw;
+} */
 
 @layer base {
   :root {

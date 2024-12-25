@@ -1,14 +1,34 @@
+import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
 import { CalendarDays, Clock, MapPin } from "lucide-react"
+import Header from '@/components/common/header';
+import Footer from '@/components/common/footer';
 
 function EventInfoPage() {
   const navigate = useNavigate()
+  const [isVisible, setIsVisible] = useState(false)  // Add this state
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true)
+    }, 100)
+
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
-    <div className="container mx-auto py-10 px-4 min-h-screen">
-      <Card className="w-full max-w-2xl mx-auto">
+    <div className={`hamong-background min-h-screen overflow-hidden
+      [background-image:linear-gradient(to_right,#A5A696_1px,transparent_1px),linear-gradient(to_bottom,#A5A696_1px,transparent_1px)]
+      sm:[background-size:5vw_5vw]
+      md:[background-size:4vw_4vw]
+      lg:[background-size:3vw_3vw]
+      [background-size:6vw_6vw]`}>
+      <Header />
+      <Card className={`w-5/6 max-w-2xl mx-auto transition-all border-3 border-[#061122] rounded-none duration-1000 transform ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-32'
+      }`}>
         <CardHeader>
           <CardTitle className="text-center text-3xl">Event Details</CardTitle>
         </CardHeader>
@@ -66,6 +86,7 @@ function EventInfoPage() {
           </div>
         </CardContent>
       </Card>
+      <Footer />
     </div>
   )
 }
