@@ -12,7 +12,16 @@ module.exports = {
 			'10': '10px', // Custom border width of 10 pixels
 		},
 		fontFamily: {
-			kr: ['Noto Sans KR', 'sans-serif'],
+			kr: [
+				'Noto Sans KR',
+				'Nanum Myeongjo', 
+				'Black Han Sans', 
+				'Do Hyeon', 
+				'Smokum',
+				'-apple-system',        // Safari system font
+				'BlinkMacSystemFont',   // Safari system font
+				'sans-serif'
+			],
 		},
   		borderRadius: {
   			lg: 'var(--radius)',

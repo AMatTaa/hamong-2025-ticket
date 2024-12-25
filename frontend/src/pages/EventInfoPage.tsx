@@ -19,7 +19,12 @@ function EventInfoPage() {
   }, [])
 
   return (
-    <div className="hamong-background soft-grid-background">
+    <div className={`hamong-background min-h-screen overflow-hidden
+      [background-image:linear-gradient(to_right,#A5A696_1px,transparent_1px),linear-gradient(to_bottom,#A5A696_1px,transparent_1px)]
+      sm:[background-size:5vw_5vw]
+      md:[background-size:4vw_4vw]
+      lg:[background-size:3vw_3vw]
+      [background-size:6vw_6vw]`}>
       <Header />
       <Card className={`w-5/6 max-w-2xl mx-auto transition-all border-3 border-[#061122] rounded-none duration-1000 transform ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-32'
