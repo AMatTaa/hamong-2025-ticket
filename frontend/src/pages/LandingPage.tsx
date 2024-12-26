@@ -29,8 +29,8 @@ function LandingPage() {
           }`}>
             <CardHeader>
               <div className="flex flex-col items-center gap-4">
-                <CardTitle className="text-center text-4xl font-extrabold">하몽 2025 정기공연</CardTitle>
-                <CardDescription className="text-center text-3xl font-bold">"무모한 공연"</CardDescription>
+                <CardDescription className="text-center text-2xl font-bold">"무모한 공연"</CardDescription>
+                <CardTitle className="text-center text-3xl font-extrabold">하몽 2025 정기공연</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -49,7 +49,7 @@ function LandingPage() {
           </Card>
         </div>
         {/* Poster Image - properly hidden on mobile */}
-        <div className="h-auto mx-8 my-2 md:w-[27%] md:block sm:w-1/7">
+        <div className="h-auto mx-8 my-2 md:w-[45%] lg:w-[27%] md:block sm:w-1/7">
           <div className={`border-2 border-[#061222] rounded-none transition-all duration-1000 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-32'
           }`}>
