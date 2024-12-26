@@ -8,6 +8,7 @@ import Background from '@/components/common/background';
 import { api } from '@/services/api'
 import { RsvpData } from '@/libs/types'
 import Swal from 'sweetalert2'
+import { ArrowLeft } from 'lucide-react'
 // import type { HTTPError } from 'ky';  // Add this import
 
 function RsvpPage() {
@@ -19,9 +20,11 @@ function RsvpPage() {
   const [isVisible, setIsVisible] = useState(false)
   const [showName, setShowName] = useState(false)
   const [showGuests, setShowGuests] = useState(false)
+  // const [showPayments, setShowPayments] = useState(false)
   const [showSubmit, setShowSubmit] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
+  const [currentStep, setCurrentStep] = useState<'phone' | 'name' | 'guests'>('phone')
+  const [isMobile, setIsMobile] = useState(false)
 
   // Validate phone number format
   const isValidPhone = (phone: string) => {
@@ -30,16 +33,14 @@ function RsvpPage() {
 
   // Handle phone number change
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Only keep digits
-    const digitsOnly = value.replace(/\D/g, '');
-    
-    setPhone(digitsOnly);
-    setShowName(isValidPhone(digitsOnly));
+    const value = e.target.value
+    const digitsOnly = value.replace(/\D/g, '')
+    setPhone(digitsOnly)
+    setShowName(isValidPhone(digitsOnly))
     if (!isValidPhone(digitsOnly)) {
-      setShowGuests(false);
-      setName('');
-      setGuests('');
+      setShowGuests(false)
+      setName('')
+      setGuests('')
     }
   }
 
@@ -53,11 +54,17 @@ function RsvpPage() {
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setName(value)
-    setShowGuests(value.length >= 2) // Show guests field if name is at least 2 characters
+    setShowGuests(value.length >= 2)
     if (!value) {
       setGuests('')
     }
   }
+
+  // const handlePaymentsChange = (e: React.ChangeEvent<HTMLButtonElement>) => {
+  //   const value = e.target.value
+  //   setShowPayments(value)
+  //   setShowSubmit(value.length > 0) // Show submit button when payments field has a value
+  // }
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -65,6 +72,16 @@ function RsvpPage() {
     }, 100)
 
     return () => clearTimeout(timer)
+  }, [])
+
+  // Add useEffect for mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
   const handleSubmit = async (e?: React.MouseEvent) => {
@@ -108,6 +125,24 @@ function RsvpPage() {
     )
   }
 
+  // Add back button handler
+  const handleBack = (step: 'phone' | 'name' | 'guests') => {
+    setCurrentStep(step)
+  }
+
+  // Add confirm handlers for each step
+  const handlePhoneConfirm = () => {
+    if (isValidPhone(phone)) {
+      setCurrentStep('name')
+    }
+  }
+
+  const handleNameConfirm = () => {
+    if (name.length >= 2) {
+      setCurrentStep('guests')
+    }
+  }
+
   return (
     <Background>
       <div className="flex justify-center items-center h-full">
@@ -118,7 +153,9 @@ function RsvpPage() {
             <CardTitle>등록하기</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6 overflow-hidden"> {/* Added overflow-hidden and increased space */}
-            <div className="space-y-2 transition-all duration-500 ease-out">
+            <div className={`space-y-2 transition-all duration-500 ease-out ${
+              isMobile && currentStep !== 'phone' ? 'hidden' : ''
+            }`}>
               <Label htmlFor="phone">연락처</Label>
               <Input
                 id="phone"
@@ -130,54 +167,94 @@ function RsvpPage() {
                 className="transition-all duration-300"
                 autoComplete="off"
               />
+              {isMobile && (
+                <div className="flex justify-end mt-4">
+                  <Button 
+                    className="w-1/2 transition-opacity duration-500"
+                    onClick={handlePhoneConfirm}
+                    disabled={!isValidPhone(phone)}
+                  >
+                    확인
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <div className={`space-y-2 transition-all duration-500 ease-out ${
+              !showName ? 'hidden' : ''
+            } ${isMobile && currentStep !== 'name' ? 'hidden' : ''}`}>
+              <Label htmlFor="name">이름</Label>
+              <Input
+                id="name"
+                placeholder="이름을 적어주세요"
+                value={name}
+                onChange={handleNameChange}
+                className="transition-all duration-300"
+                autoComplete="off"
+              />
+              {isMobile && (
+                <div className="flex justify-between items-center mt-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleBack('phone')}
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    뒤로
+                  </Button>
+                  <Button 
+                    className="w-1/2 transition-opacity duration-500"
+                    onClick={handleNameConfirm}
+                    disabled={name.length < 2}
+                  >
+                    확인
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <div className={`space-y-2 transition-all duration-500 ease-out ${
+              !showGuests ? 'hidden' : ''
+            } ${isMobile && currentStep !== 'guests' ? 'hidden' : ''}`}>
+              <Label htmlFor="guests">플러스 원</Label>
+              <Input
+                id="guests"
+                type="number"
+                min="1"
+                placeholder="총 인원"
+                value={guests}
+                onChange={handleGuestsChange}
+                className="transition-all duration-300"
+                autoComplete="off"
+              />
+              {isMobile && (
+                <div className="flex justify-between items-center mt-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleBack('name')}
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    뒤로
+                  </Button>
+                  <Button 
+                    className="w-1/2"
+                    onClick={handleSubmit}
+                    disabled={isLoading || !isFormValid()}
+                  >
+                    {isLoading ? "처리 중..." : "등록하기"}
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className={`transform transition-all duration-500 ease-out ${
-              showName 
-                ? 'translate-y-0 opacity-100 h-auto mb-6' 
-                : '-translate-y-8 opacity-0 h-0 mb-0'
-            }`}>
-              <div className="space-y-2">
-                <Label htmlFor="name">이름</Label>
-                <Input
-                  id="name"
-                  placeholder="이름을 적어주세요"
-                  value={name}
-                  onChange={handleNameChange}
-                  className="transition-all duration-300"
-                  autoComplete="off"
-                />
-              </div>
-            </div>
-
-            <div className={`transform transition-all duration-500 ease-out ${
-              showGuests 
-                ? 'translate-y-0 opacity-100 h-auto' 
-                : '-translate-y-8 opacity-0 h-0'
-            }`}>
-              <div className="space-y-2">
-                <Label htmlFor="guests">플러스 원</Label>
-                <Input
-                  id="guests"
-                  type="number"
-                  min="1"
-                  placeholder="총 인원"
-                  value={guests}
-                  onChange={handleGuestsChange}
-                  className="transition-all duration-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  autoComplete="off"
-                />
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <div className={`transform transition-all duration-500 ease-out ${
-              showSubmit
+              showSubmit && !isMobile
                 ? 'translate-y-0 opacity-100 h-auto mt-8 mb-6' 
                 : '-translate-y-8 opacity-0 h-0 mt-0'
             }`}>
               <Button 
-                className="w-full bg-[#061122] text-white hover:bg-[#162133] transition-colors"
+                className="w-1/2 bg-[#061122] text-white hover:bg-[#162133] transition-colors"
                 onClick={handleSubmit}
                 disabled={isLoading || !isFormValid()}
               >
