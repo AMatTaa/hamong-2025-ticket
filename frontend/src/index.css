@@ -75,7 +75,7 @@ button:focus-visible {
 
 .hamong-background {
   background-color: #e8eaea; /* Equivalent to bg-[#E8EAEA] */
-  height: 100vh; /* Equivalent to min-h-screen */
+  height: 100%; /* Equivalent to min-h-screen */
   display: flex; /* Equivalent to flex */
   flex-direction: column; /* Equivalent to flex-col */
   /* font-family: "Nanum Myeongjo", serif; */

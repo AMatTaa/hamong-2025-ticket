@@ -8,7 +8,7 @@ interface BackgroundProps {
 
 const Background: React.FC<BackgroundProps> = ({ children }) => {
   return (
-    <div className={`hamong-background
+    <div className={`hamong-background md:h-screen
         [background-image:linear-gradient(to_right,#A5A696_1px,transparent_1px),linear-gradient(to_bottom,#A5A696_1px,transparent_1px)]
         sm:[background-size:5vw_5vw]
         md:[background-size:4vw_4vw]
