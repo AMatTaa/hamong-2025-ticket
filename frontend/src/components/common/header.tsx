@@ -10,10 +10,16 @@ const Header = () => {
     if (window.location.pathname === '/') {
       Swal.fire({
         title: '이미 홈이랍니다!',
+        toast: true,
         icon: 'info',
         showConfirmButton: false,
         timer: 1000,
-        timerProgressBar: true
+        position: 'bottom-end',
+        timerProgressBar: true,
+        width: '70%',
+        customClass: {
+          title: 'text-sm'
+        }
       })
     } else {
       Swal.fire({
@@ -23,6 +29,11 @@ const Header = () => {
         showCancelButton: true,
         confirmButtonText: '돌아갈래요!',
         cancelButtonText: '그냥 있을래요!',
+        width: '80%',
+        customClass: {
+          title: 'text-lg',
+          popup: 'text-sm',
+        }
       }).then((result) => {
         if (result.isConfirmed) {
           navigate('/');
@@ -32,7 +43,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full bg-[#061222] px-3 py-2 shadow-md z-50">
+    <header className="sticky top-0 left-0 w-full bg-[#061222] px-3 py-2 shadow-md z-50">
       <div className="container flex justify-between items-center">
         {/* Home icon on the left */}
         <div className="flex-none">
