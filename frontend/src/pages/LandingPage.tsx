@@ -20,7 +20,7 @@ function LandingPage() {
 
   return (
     <Background>
-      <div className="container flex w-screen h-full flex-col md:flex-row items-center justify-center">
+      <div className="container flex w-screen h-full flex-col md:flex-row items-center justify-center lg:justify-evenly">
 
         {/* Card - full width on mobile, half width on larger screens */}
         <div className="md:w-1/2 max-w-[400px] mx-8 my-2">
