@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
-import { CalendarDays, MapPin, Banknote } from "lucide-react"
+import { CalendarDays, MapPin, Banknote, CalendarPlus } from "lucide-react"
+import { ics } from "calendar-link";
 import Background from '@/components/common/background';
+import { Toast } from '@/utils/sweetalert-config';
+
 
 function EventInfoPage() {
   const navigate = useNavigate()
@@ -61,12 +64,47 @@ function EventInfoPage() {
             <Button className="flex-1" onClick={() => navigate('/rsvp')}>
               등록하기
             </Button>
+            
             <Button 
               variant="outline" 
               className="flex-1"
               onClick={() => navigate('/')}
             >
               메인으로
+            </Button>
+
+            <Button 
+              variant="outline" 
+              className="flex-1 gap-2"
+              onClick={() => {
+                try {
+                  const event = {
+                    title: "성우레더스테이지 공연",
+                    start: new Date("2024-01-18T17:00:00+09:00"),
+                    end: new Date("2024-01-18T19:30:00+09:00"),
+                    location: "서울 성동구 연무장길 45"
+                  };
+
+                  // Google Calendar URL (works well on Android)
+                  const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${event.start.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${event.end.toISOString().replace(/[-:]/g, '').split('.')[0]}Z&location=${encodeURIComponent(event.location)}`;
+                  
+                  // Try ICS first, fallback to Google Calendar
+                  try {
+                    window.location.href = ics(event);
+                  } catch {
+                    window.location.href = googleUrl;
+                  }
+                } catch (error) {
+                  Toast.fire({
+                    title: "캘린더 추가 실패",
+                    text: (error as Error).message,
+                    icon: "error",
+                  });
+                }
+              }}
+            >
+              <CalendarPlus className="w-4 h-4" />
+              캘린더에 추가
             </Button>
           </div>
         </CardContent>
