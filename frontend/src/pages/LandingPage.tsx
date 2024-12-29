@@ -20,17 +20,17 @@ function LandingPage() {
 
   return (
     <Background>
-      <div className="container flex w-screen h-full flex-col md:flex-row items-center justify-center lg:justify-evenly">
+      <div className="flex w-full h-full flex-col md:flex-row items-center justify-center lg:justify-evenly p-4">
 
         {/* Card - full width on mobile, half width on larger screens */}
-        <div className="md:w-1/2 max-w-[400px] mx-8 my-2">
-          <Card className={`transition-all max-w-[400px] border-3 border-[#061222] rounded-none duration-1000 ${
+        <div className="mx-8 my-2">
+          <Card className={`transition-all sm:w-[300px] border-3 max-w-[500px] border-[#061222] rounded-none duration-1000 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-32'
           }`}>
             <CardHeader>
               <div className="flex flex-col items-center gap-4">
-                <CardDescription className="text-center text-2xl font-bold">"무모한 공연"</CardDescription>
-                <CardTitle className="text-center text-3xl font-extrabold">하몽 2025 정기공연</CardTitle>
+                <CardDescription className="text-center text-xl lg:text-2xl font-bold">"무모한 공연"</CardDescription>
+                <CardTitle className="text-center text-2xl lg:text-3xl font-extrabold">하몽 2025 정기공연</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -42,7 +42,12 @@ function LandingPage() {
                 <Button variant="outline" 
                         className='text-[#061122] border-2 font-semibold border-[#061122] rounded-none' 
                         onClick={() => navigate('/info')}>
-                  공연 셋리스트
+                  Information
+                </Button>
+                <Button variant="outline" 
+                        className='text-[#061122] border-2 font-semibold border-[#061122] rounded-none' 
+                        onClick={() => navigate('/setlist')}>
+                  Setlist
                 </Button>
               </div>
             </CardContent>

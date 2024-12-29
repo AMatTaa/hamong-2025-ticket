@@ -1,6 +1,7 @@
 // frontend/src/components/Header.jsx
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import CustomSwal from '@/utils/sweetalert-config';
+import { Toast } from '@/utils/sweetalert-config';
 import logo from '../../assets/hamong.png';
 
 const Header = () => {
@@ -8,21 +9,12 @@ const Header = () => {
 
   const handleClick = () => {
     if (window.location.pathname === '/') {
-      Swal.fire({
+      Toast.fire({
         title: '이미 홈이랍니다!',
-        toast: true,
         icon: 'info',
-        showConfirmButton: false,
-        timer: 1000,
-        position: 'bottom-end',
-        timerProgressBar: true,
-        width: '70%',
-        customClass: {
-          title: 'text-sm'
-        }
-      })
+      });
     } else {
-      Swal.fire({
+      CustomSwal.fire({
         title: '홈으로 돌아갈까요?',
         text: '작성 내용이 사라진답니다!',
         icon: 'question',
@@ -30,10 +22,6 @@ const Header = () => {
         confirmButtonText: '돌아갈래요!',
         cancelButtonText: '그냥 있을래요!',
         width: '80%',
-        customClass: {
-          title: 'text-lg',
-          popup: 'text-sm',
-        }
       }).then((result) => {
         if (result.isConfirmed) {
           navigate('/');
