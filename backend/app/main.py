@@ -14,6 +14,7 @@ from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.ext.declarative import declarative_base
 import traceback
 import uvicorn
+import logging
 
 # Load environment variables
 load_dotenv()
@@ -31,6 +32,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @app.get("/")
 async def root():
@@ -68,7 +72,7 @@ async def send_rsvp(rsvp: RSVPCreate, db: Session = Depends(get_db)):
     """
     Create a new RSVP entry in PostgreSQL
     """
-    print("Received RSVP data:", rsvp.dict())  # Debug log
+    logger.info(f"Received RSVP request: {rsvp}")
     try:
         # Use the correct model from models.py
         db_rsvp = RSVPModel(
@@ -90,17 +94,11 @@ async def send_rsvp(rsvp: RSVPCreate, db: Session = Depends(get_db)):
             created_at=db_rsvp.created_at
         )
         
-        return {
-            "message": "RSVP successfully created",
-            "rsvp": response_rsvp
-        }
+        logger.info("RSVP created successfully")
+        return {"message": "RSVP created successfully", "rsvp": response_rsvp}
     except Exception as e:
-        db.rollback()
-        print(traceback.format_exc(), e)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to create RSVP: {str(e)}"
-        )
+        logger.error(f"Error creating RSVP: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/get_info")
 async def get_info():
