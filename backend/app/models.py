@@ -1,5 +1,5 @@
 from sqlalchemy import Column, SmallInteger, String, DateTime, Boolean, text
-from database import Base
+from .database import Base
 
 class RSVP(Base):
     __tablename__ = "rsvps"
