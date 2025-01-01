@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import Background from '@/components/common/background';
-import { api } from '@/services/api'
+// import { api } from '@/services/api'
 import { RsvpData } from '@/libs/types'
 import CustomSwal, { Toast } from '@/utils/sweetalert-config'
 import { ArrowLeft } from 'lucide-react'
@@ -152,9 +152,23 @@ function RsvpPage() {
 
       if (result.isConfirmed) {
         setIsLoading(true);
+        setError(null);
+        
         try {
-          setError(null);
-          await api.submitRsvp(rsvpData);
+          // Use fetch instead of ky for better browser compatibility
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/send_rsvp`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: JSON.stringify(rsvpData),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
           await Toast.fire({
             title: '등록 완료!',
             text: '공연날에 뵈어요:)',
