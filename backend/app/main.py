@@ -20,6 +20,9 @@ load_dotenv()
 
 app = FastAPI(debug=True)
 
+# Add prefix to all routes
+app.router.prefix = "/api"
+
 # CORS configuration
 origins = [
     "http://localhost:5173",  # Vite default dev server
