@@ -113,55 +113,57 @@ function RsvpPage() {
       guests: parseInt(guests)
     };
 
-    CustomSwal.fire({
-      title: '정보 확인',
-      html: `
-        <div class="space-y-4">
-          <p class="text-sm text-[#061222] mb-4">이대로 확정할까요?</p>
-          <div class="grid grid-cols-[100px_1fr] gap-2 items-center border-b border-[#061222] pb-2">
-            <div class="text-sm font-medium text-[#061222]">연락처</div>
-            <div class="text-sm text-[#061222] font-bold">${rsvpData.phone}</div>
+    try {
+      const result = await CustomSwal.fire({
+        title: '정보 확인',
+        html: `
+          <div class="space-y-4">
+            <p class="text-sm text-[#061222] mb-4">이대로 확정할까요?</p>
+            <div class="grid grid-cols-[100px_1fr] gap-2 items-center border-b border-[#061222] pb-2">
+              <div class="text-sm font-medium text-[#061222]">연락처</div>
+              <div class="text-sm text-[#061222] font-bold">${rsvpData.phone}</div>
+            </div>
+            <div class="grid grid-cols-[100px_1fr] gap-2 items-center border-b border-[#061222] pb-2">
+              <div class="text-sm font-medium text-[#061222]">이름</div>
+              <div class="text-sm text-[#061222] font-bold">${rsvpData.name}</div>
+            </div>
+            <div class="grid grid-cols-[100px_1fr] gap-2 items-center border-b border-[#061222] pb-2">
+              <div class="text-sm font-medium text-[#061222]">추가 인원</div>
+              <div class="text-sm text-[#061222] font-bold">${rsvpData.guests}명</div>
+            </div>
+            <div class="grid grid-cols-[100px_1fr] gap-2 items-center border-b border-[#061222] pb-2">
+              <div class="text-sm font-medium text-[#061222]">총 인원</div>
+              <div class="text-sm text-[#061222] font-bold">${rsvpData.guests + 1}명</div>
+            </div>
+            <div class="grid grid-cols-[100px_1fr] gap-2 items-center pb-2">
+              <div class="text-sm font-medium text-[#061222]">총 금액</div>
+              <div class="text-sm text-[#061222] font-bold">${(rsvpData.guests + 1) * 5000}원</div>
+            </div>
           </div>
-          <div class="grid grid-cols-[100px_1fr] gap-2 items-center border-b border-[#061222] pb-2">
-            <div class="text-sm font-medium text-[#061222]">이름</div>
-            <div class="text-sm text-[#061222] font-bold">${rsvpData.name}</div>
-          </div>
-          <div class="grid grid-cols-[100px_1fr] gap-2 items-center border-b border-[#061222] pb-2">
-            <div class="text-sm font-medium text-[#061222]">추가 인원</div>
-            <div class="text-sm text-[#061222] font-bold">${rsvpData.guests}명</div>
-          </div>
-          <div class="grid grid-cols-[100px_1fr] gap-2 items-center border-b border-[#061222] pb-2">
-            <div class="text-sm font-medium text-[#061222]">총 인원</div>
-            <div class="text-sm text-[#061222] font-bold">${rsvpData.guests + 1}명</div>
-          </div>
-          <div class="grid grid-cols-[100px_1fr] gap-2 items-center pb-2">
-            <div class="text-sm font-medium text-[#061222]">총 금액</div>
-            <div class="text-sm text-[#061222] font-bold">${(rsvpData.guests + 1) * 5000}원</div>
-          </div>
-        </div>
-      `,
-      showCancelButton: true,
-      confirmButtonText: '네!',
-      cancelButtonText: '고칠게 있어요!',
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      width: '90%',
-      padding: '2rem',
-      willClose: async () => {
+        `,
+        showCancelButton: true,
+        confirmButtonText: '네!',
+        cancelButtonText: '고칠게 있어요!',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        width: '90%',
+        padding: '2rem',
+      });
+
+      if (result.isConfirmed) {
         setIsLoading(true);
         try {
           setError(null);
           await api.submitRsvp(rsvpData);
-          Toast.fire({
+          await Toast.fire({
             title: '등록 완료!',
             text: '공연날에 뵈어요:)',
             icon: 'success',
-          }).then(() => {
-            navigate('/');
           });
+          navigate('/');
         } catch (error) {
           console.error('Error details:', error);
-          Toast.fire({
+          await Toast.fire({
             title: 'RSVP 등록 실패',
             text: '다시 시도해 주세요.',
             icon: 'error',
@@ -171,7 +173,10 @@ function RsvpPage() {
           setIsLoading(false);
         }
       }
-    });
+    } catch (error) {
+      console.error('SweetAlert error:', error);
+      setError('처리 중 오류가 발생했습니다. 다시 시도해 주세요.');
+    }
   };
 
   const isFormValid = () => {
