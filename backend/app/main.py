@@ -23,19 +23,13 @@ app = FastAPI(debug=True)
 # Add prefix to all routes
 app.router.prefix = "/api"
 
-# CORS configuration
-origins = [
-    "http://localhost:5173",  # Vite default dev server
-    "http://localhost:3000",  # Local development
-    os.getenv("FRONTEND_URL", ""),  # Production frontend URL
-]
-
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Use the defined origins instead of "*"
-    allow_credentials=True,  # Enable if you need to send cookies
-    allow_methods=["GET", "POST"],  # Specify the HTTP methods you need
-    allow_headers=["*"],  # You might want to specify exact headers in production
+    allow_origins=["*"],  # In production, replace with your actual domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.get("/")
