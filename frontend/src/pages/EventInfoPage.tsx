@@ -54,7 +54,7 @@ function EventInfoPage() {
               <Banknote className="w-6 h-6 text-primary mt-1" />
               <div>
                 <h3 className="font-semibold text-lg">가격</h3>
-                <p className="text-muted-foreground font-bold">5,000원</p>
+                <p className="text-muted-foreground font-bold">사전 4,000원 | 현장 5,000원</p>
               </div>
             </div>
           </div>
