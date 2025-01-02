@@ -155,7 +155,6 @@ function RsvpPage() {
         setError(null);
         
         try {
-          // Use fetch instead of ky for better browser compatibility
           const response = await fetch(`${import.meta.env.VITE_API_URL}/send_rsvp`, {
             method: 'POST',
             headers: {
@@ -165,8 +164,10 @@ function RsvpPage() {
             body: JSON.stringify(rsvpData),
           });
 
+          const data = await response.json();
+
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(data.message || `HTTP error! status: ${response.status}`);
           }
 
           await Toast.fire({
@@ -177,19 +178,20 @@ function RsvpPage() {
           navigate('/');
         } catch (error) {
           console.error('Error details:', error);
+          const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
           await Toast.fire({
             title: 'RSVP 등록 실패',
-            text: '다시 시도해 주세요.',
+            text: errorMessage,
             icon: 'error',
           });
           setError('RSVP 등록에 실패했습니다. 다시 시도해 주세요.');
-        } finally {
-          setIsLoading(false);
         }
       }
     } catch (error) {
       console.error('SweetAlert error:', error);
       setError('처리 중 오류가 발생했습니다. 다시 시도해 주세요.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
