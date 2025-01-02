@@ -176,8 +176,14 @@ function RsvpPage() {
             icon: 'success',
           });
           navigate('/');
-        } catch (error) {
+        } catch (error: any) {
           console.error('Error details:', error);
+          console.log({
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+            cause: error.cause
+          });
           const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
           await Toast.fire({
             title: 'RSVP 등록 실패',
