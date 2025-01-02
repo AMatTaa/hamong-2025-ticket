@@ -242,21 +242,20 @@ function RsvpPage() {
     }
   }
 
-  const copyToClipboard = async (text: string) => {
+  const copyToClipboard = async (text: string, e?: React.MouseEvent | React.TouchEvent) => {
+    // Stop any event propagation first
+    e?.stopPropagation();
+    
     try {
-      // Try modern clipboard API first
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(text);
       } else {
-        // Fallback for iOS and older browsers
         const tempInput = document.createElement('input');
-        tempInput.style.position = 'absolute';
-        tempInput.style.left = '-9999px';
         tempInput.value = text;
         document.body.appendChild(tempInput);
         
-        // Handle iOS
         if (navigator.userAgent.match(/ipad|iphone/i)) {
+          // iOS specific handling
           const range = document.createRange();
           range.selectNodeContents(tempInput);
           const selection = window.getSelection();
@@ -266,24 +265,18 @@ function RsvpPage() {
         } else {
           tempInput.select();
         }
-        
         document.execCommand('copy');
         document.body.removeChild(tempInput);
       }
-
-      Toast.fire({
-        title: '복사 완료!',
-        text: '계좌번호가 클립보드에 복사되었습니다.',
-        icon: 'success',
-      });
-    } catch (err) {
-      console.error('Failed to copy:', err);
-      Toast.fire({
-        title: '복사 실패',
-        text: '계좌번호를 직접 복사해주세요.',
-        icon: 'error',
-      });
+    } catch (error) {
+      console.error('Error copying to clipboard:', error);
     }
+
+    await Toast.fire({
+      title: '복사 완료!',
+      text: '계좌번호가 클립보드에 복사되었습니다.',
+      icon: 'success',
+    });
   };
 
   return (
@@ -361,15 +354,15 @@ function RsvpPage() {
             <div className={`space-y-2 transition-all duration-500 ease-out ${
               !showGuests ? 'hidden' : ''
             } ${isMobile && currentStep !== 'guests' ? 'hidden' : ''}`}>
-              <Label htmlFor="guests">플러스 원</Label>
+              <Label htmlFor="guests">다른 분도 오시나요?</Label>
               <Input
                 id="guests"
                 ref={guestsInputRef}
                 type={isMobile ? "tel" : "number"}
                 inputMode={isMobile ? "numeric" : undefined}
-                min="1"
+                min="0"
                 max="10"
-                placeholder="등록자를 제외한 인원 (1-10명)"
+                placeholder="등록자를 제외한 인원 (0-10명)"
                 value={guests}
                 onChange={handleGuestsChange}
                 className="transition-all duration-300"
@@ -401,22 +394,25 @@ function RsvpPage() {
             } ${isMobile && currentStep !== 'payment' ? 'hidden' : ''}`}>
               <div className="space-y-4">
                 <h3 className="font-semibold">티켓 가격 안내</h3>
-                <p className="text-sm text-gray-600">1인당 5,000원</p>
+                <p className="text-sm text-gray-600">1인당 4,000원</p>
                 <p className="text-sm text-gray-600">총 인원: <span className="font-bold">{parseInt(guests) + 1}명</span></p>
-                <p className="text-sm text-gray-600">총 금액: <span className="font-bold">{(parseInt(guests) + 1) * 5000}원</span></p>
+                <p className="text-sm text-gray-600">총 금액: <span className="font-bold">{(parseInt(guests) + 1) * 4000}원</span></p>
                 
                 <div className="border-t pt-4">
                   <h4 className="font-medium mb-2">입금 계좌</h4>
                   <button 
                     onClick={(e) => {
                       e.preventDefault();
+                      e.stopPropagation();
                       copyToClipboard('토스뱅크 1000-7968-9090');
                     }}
                     onTouchStart={(e) => {
                       e.preventDefault();
+                      e.stopPropagation();
                     }}
                     onTouchEnd={(e) => {
                       e.preventDefault();
+                      e.stopPropagation();
                       copyToClipboard('토스뱅크 1000-7968-9090');
                     }}
                     className="text-sm text-gray-600 hover:text-gray-900 transition-colors cursor-pointer flex items-center space-x-2 active:opacity-70 p-2 -m-2 select-none"
