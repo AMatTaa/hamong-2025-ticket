@@ -19,7 +19,11 @@ import logging
 # Load environment variables
 load_dotenv()
 
-app = FastAPI(debug=True)
+app = FastAPI(
+    debug=True,
+    docs_url=None,    # Disable Swagger UI
+    redoc_url=None    # Disable ReDoc
+)
 
 # Add prefix to all routes
 app.router.prefix = "/api"
