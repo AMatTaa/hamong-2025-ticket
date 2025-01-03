@@ -31,7 +31,7 @@ function EventInfoPage() {
     const initializeMap = () => {
       if (!mapElement.current || !window.naver) return;
 
-      const location = new window.naver.maps.LatLng(37.5472, 127.0452);
+      const location = new window.naver.maps.LatLng(37.5428311, 127.0545912);
       const mapOptions = {
         center: location,
         zoom: 17,
