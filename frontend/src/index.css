@@ -74,7 +74,7 @@ button:focus-visible {
 }
 
 .hamong-background {
-  background-color: #e8eaea; /* Equivalent to bg-[#E8EAEA] */
+  background-color: #f6f3ee; /* Equivalent to bg-[#E8EAEA] */
   height: 100%; /* Equivalent to min-h-screen */
   display: flex; /* Equivalent to flex */
   flex-direction: column; /* Equivalent to flex-col */
