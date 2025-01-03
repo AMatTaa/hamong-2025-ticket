@@ -68,10 +68,8 @@ function RsvpPage() {
     
     if (value === '') {
       setGuests('');
-    } else if (!isNaN(numValue)) {
-      // Clamp the value between 1 and 10
-      const clampedValue = Math.min(Math.max(numValue, 1), 10);
-      setGuests(clampedValue.toString());
+    } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 10) {
+      setGuests(numValue.toString());
     }
   }
 
@@ -128,7 +126,7 @@ function RsvpPage() {
               <div class="text-sm text-[#061222] font-bold">${rsvpData.name}</div>
             </div>
             <div class="grid grid-cols-[100px_1fr] gap-2 items-center border-b border-[#061222] pb-2">
-              <div class="text-sm font-medium text-[#061222]">추가 인원</div>
+              <div class="text-sm font-medium text-[#061222]">동행 인원</div>
               <div class="text-sm text-[#061222] font-bold">${rsvpData.guests}명</div>
             </div>
             <div class="grid grid-cols-[100px_1fr] gap-2 items-center border-b border-[#061222] pb-2">
@@ -137,7 +135,7 @@ function RsvpPage() {
             </div>
             <div class="grid grid-cols-[100px_1fr] gap-2 items-center pb-2">
               <div class="text-sm font-medium text-[#061222]">총 금액</div>
-              <div class="text-sm text-[#061222] font-bold">${(rsvpData.guests + 1) * 5000}원</div>
+              <div class="text-sm text-[#061222] font-bold">${(rsvpData.guests + 1) * 4000}원</div>
             </div>
           </div>
         `,
@@ -360,7 +358,7 @@ function RsvpPage() {
             <div className={`space-y-2 transition-all duration-500 ease-out ${
               !showGuests ? 'hidden' : ''
             } ${isMobile && currentStep !== 'guests' ? 'hidden' : ''}`}>
-              <Label htmlFor="guests">다른 분도 오시나요?</Label>
+              <Label htmlFor="guests">동행 인원</Label>
               <Input
                 id="guests"
                 ref={guestsInputRef}
@@ -441,6 +439,8 @@ function RsvpPage() {
                     </svg>
                   </button>
                 </div>
+
+                <p className="text-sm text-gray-600">*원활한 준비를 위해 대표자 성함으로 입금해주세요.</p>
 
                 <div className="flex items-center space-x-2">
                   <Checkbox 
