@@ -19,7 +19,7 @@ from sqlalchemy.ext.declarative import declarative_base
 class RSVPBase(BaseModel):
     phone: str = Field(..., pattern=r'^\d{11}$')  # Changed pattern to exactly 11 digits
     name: str = Field(..., min_length=1, max_length=100)
-    guests: int = Field(..., ge=1, le=10)
+    guests: int = Field(..., ge=0, le=10)
 
     @validator('phone')
     def validate_phone(cls, v):
