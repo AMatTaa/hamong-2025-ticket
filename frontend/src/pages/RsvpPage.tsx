@@ -451,7 +451,7 @@ function RsvpPage() {
                     htmlFor="payment-confirmed" 
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    입금할게요!
+                    입금했어요!
                   </label>
                 </div>
               </div>
