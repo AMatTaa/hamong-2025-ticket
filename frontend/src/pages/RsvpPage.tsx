@@ -17,7 +17,7 @@ function RsvpPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [phone, setPhone] = useState('')
   const [name, setName] = useState('')
-  const [guests, setGuests] = useState('')
+  const [guests, setGuests] = useState('0')
   const [isVisible, setIsVisible] = useState(false)
   const [showName, setShowName] = useState(false)
   const [showGuests, setShowGuests] = useState(false)
@@ -58,7 +58,7 @@ function RsvpPage() {
     if (!isValidPhone(digitsOnly)) {
       setShowGuests(false)
       setName('')
-      setGuests('')
+      setGuests('0')
     }
   }
 
@@ -79,7 +79,7 @@ function RsvpPage() {
     setName(value)
     setShowGuests(value.length >= 2)
     if (!value) {
-      setGuests('')
+      setGuests('0')
     }
   }
 
@@ -202,7 +202,7 @@ function RsvpPage() {
       isValidPhone(phone) && 
       name.length >= 2 && 
       guests.length > 0 && 
-      parseInt(guests) > 0 &&
+      parseInt(guests) >= 0 &&
       paymentConfirmed
     )
   }
@@ -214,12 +214,12 @@ function RsvpPage() {
     
     if (step === 'phone') {
       setName('')
-      setGuests('')
+      setGuests('0')
       setShowGuests(false)
       setShowSubmit(false)
       setPaymentConfirmed(false)
     } else if (step === 'name') {
-      setGuests('')
+      setGuests('0')
       setShowSubmit(false)
       setPaymentConfirmed(false)
     } else if (step === 'guests') {
@@ -241,7 +241,7 @@ function RsvpPage() {
   }
 
   const handleGuestsConfirm = () => {
-    if (guests.length > 0 && parseInt(guests) > 0) {
+    if (guests.length > 0 && parseInt(guests) >= 0) {
       setCurrentStep('payment')
     }
   }
@@ -385,7 +385,6 @@ function RsvpPage() {
                   <Button 
                     className="w-1/2"
                     onClick={handleGuestsConfirm}
-                    disabled={!guests || parseInt(guests) < 1}
                   >
                     다음
                   </Button>
