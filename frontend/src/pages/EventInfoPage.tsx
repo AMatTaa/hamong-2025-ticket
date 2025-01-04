@@ -72,7 +72,7 @@ function EventInfoPage() {
                 <CalendarDays className="w-6 h-6 text-primary mt-1" />
                 <div>
                   <h3 className="font-semibold text-lg">일시</h3>
-                  <p className="text-muted-foreground">1월 18일 토요일, 오후 5시 50분</p>
+                  <p className="text-muted-foreground">1월 18일 토요일, 오후 5시 30분</p>
                 </div>
               </div>
 
