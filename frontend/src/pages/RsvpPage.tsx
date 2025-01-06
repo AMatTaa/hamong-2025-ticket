@@ -70,6 +70,7 @@ function RsvpPage() {
       setGuests('');
     } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 10) {
       setGuests(numValue.toString());
+      setShowSubmit(isValidPhone(phone) && name.length >= 2);
     }
   }
 
@@ -286,7 +287,7 @@ function RsvpPage() {
   return (
     <Background>
       <div className="flex justify-center items-center h-full">
-        <Card className={`max-w-2xl mx-auto transition-all border-3 border-[#061122] rounded-none duration-1000 transform ${
+        <Card className={`max-w-2xl mx-auto transition-all border-3 lg:mt-8 border-[#061122] rounded-none duration-1000 transform ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-32'
         }`}>
           <CardHeader>
@@ -479,7 +480,7 @@ function RsvpPage() {
 
             {!isMobile && (
               <div className={`transform transition-all duration-500 ease-out ${
-                showSubmit
+                isFormValid()
                   ? 'translate-y-0 opacity-100 h-auto mt-8 mb-6' 
                   : '-translate-y-8 opacity-0 h-0 mt-0'
               }`}>
