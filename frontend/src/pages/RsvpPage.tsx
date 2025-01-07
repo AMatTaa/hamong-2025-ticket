@@ -22,7 +22,6 @@ function RsvpPage() {
   const [showName, setShowName] = useState(false)
   const [showGuests, setShowGuests] = useState(false)
   // const [showPayments, setShowPayments] = useState(false)
-  const [showSubmit, setShowSubmit] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentStep, setCurrentStep] = useState<'phone' | 'name' | 'guests' | 'payment'>('phone')
   const [isMobile, setIsMobile] = useState(false)
@@ -70,7 +69,6 @@ function RsvpPage() {
       setGuests('');
     } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 10) {
       setGuests(numValue.toString());
-      setShowSubmit(isValidPhone(phone) && name.length >= 2);
     }
   }
 
@@ -217,11 +215,9 @@ function RsvpPage() {
       setName('')
       setGuests('0')
       setShowGuests(false)
-      setShowSubmit(false)
       setPaymentConfirmed(false)
     } else if (step === 'name') {
       setGuests('0')
-      setShowSubmit(false)
       setPaymentConfirmed(false)
     } else if (step === 'guests') {
       setPaymentConfirmed(false)
